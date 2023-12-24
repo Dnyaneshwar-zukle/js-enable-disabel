@@ -6,79 +6,60 @@
       const date = new Date();
 
       const day = String(date.getDate()).padStart(2, "0");
-
       const month = String(date.getMonth() + 1).padStart(2, "0");
-
       const year = date.getFullYear();
-
       const hours = date.getHours();
       const minutes = date.getMinutes();
 
       const formattedDate = `${month}/${day}/${year}, ${hours}:${minutes}`;
-      let createdDate = null;
-      console.log(formattedDate);
 
       function buttonClick() {
         console.log("buttonClicked");
       }
 
-      let data = fetch("http://localhost:3000/Enable_disable");
-      data
+      fetch("http://localhost:3000/Enable_disable")
         .then((val1) => {
           console.log(val1.status);
           return val1.json();
         })
         .then((json) => {
           console.log("Data", json);
-          createdDate = json[0].LoginDate;
+          const createdDate = new Date(json[0].LoginDate);
           console.log("date", date);
           console.log("createdDate", createdDate);
           console.log("formattedDate", formattedDate);
-          let date1 = new Date(createdDate);
-          let date2 = new Date(formattedDate);
 
-          // To calculate the time difference of two dates
-          let Difference_In_Time = date2.getTime() - date1.getTime();
+          const Difference_In_Time = date.getTime() - createdDate.getTime();
+          console.log(Difference_In_Time);
+          const diffrence_in_hours = Difference_In_Time / (1000 * 3600);
+          console.log("diffrence_in_hours", diffrence_in_hours);
 
-          // To calculate the no. of days between two dates
-          let Difference_In_Days = Math.round(
+          const Difference_In_Days = Math.round(
             Difference_In_Time / (1000 * 3600 * 24)
           );
 
-          // To display the final no. of days (result)
           console.log(
             "Total number of days between dates:\n" +
-              date1.toDateString() +
+              date.toDateString() +
               " and " +
-              date2.toDateString() +
+              createdDate.toDateString() +
               " is: " +
               Difference_In_Days +
               " days"
           );
 
-          if (Difference_In_Days > 4) {
-            document.getElementById("logical").innerHTML =
+          const logicalButton = document.getElementById("logical");
+
+          if (diffrence_in_hours > 96) {
+            logicalButton.innerHTML =
               "<button onclick='buttonClick()'>Active</button>";
           } else {
-            document.getElementById("logical").innerHTML =
-              "<button disable >Deactive</button>";
+            logicalButton.innerHTML = "<button disabled>Deactive</button>";
           }
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
         });
-      console.log("createdDate", createdDate);
-
-      //   fetch("http://localhost:3000")
-      //     .then((response) => {
-      //       if (!response.ok) {
-      //         throw new Error("Network response was not ok");
-      //       }
-      //       return response.json();
-      //     })
-      //     .then((json) => {
-      //       console.log("Login Date:", json.LoginDate);
-      //     })
-      //     .catch((error) => {
-      //       console.error("Error fetching data:", error);
-      //     });
     </script>
   </head>
 
